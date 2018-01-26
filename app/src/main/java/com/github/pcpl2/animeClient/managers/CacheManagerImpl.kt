@@ -90,13 +90,15 @@ class CacheManagerImpl {
         backgroundReadFileThread = Thread(Runnable {
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND)
             val file = File(context?.cacheDir, filename)
-            val fr = FileReader(file.absoluteFile)
-            val json = BufferedReader(fr).readLine()
-            fr.close()
-            val cacheAnimeMapType = object : TypeToken<Map<String, AnimeListCache>>() {}.type
-            val obj = gson.fromJson<Map<String, AnimeListCache>>(json, cacheAnimeMapType)
-            cacheAnimeMap.clear()
-            cacheAnimeMap.putAll(obj)
+            if(file.exists()) {
+                val fr = FileReader(file.absoluteFile)
+                val json = BufferedReader(fr).readLine()
+                fr.close()
+                val cacheAnimeMapType = object : TypeToken<Map<String, AnimeListCache>>() {}.type
+                val obj = gson.fromJson<Map<String, AnimeListCache>>(json, cacheAnimeMapType)
+                cacheAnimeMap.clear()
+                cacheAnimeMap.putAll(obj)
+            }
         })
         backgroundReadFileThread?.start()
     }
