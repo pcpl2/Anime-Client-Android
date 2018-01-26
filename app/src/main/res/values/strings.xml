@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Anime-Client</string>
+    <string name="anime_list_is_empty">Anime list is empty</string>
+</resources>
