@@ -8,10 +8,12 @@ import com.github.pcpl2.animeClient.R
 import com.github.pcpl2.animeClient.callbacks.animeUpdateDataCallback
 import com.github.pcpl2.animeClient.domain.AnimeEntry
 import com.github.pcpl2.animeClient.services.GogoanimeIo
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.widget.RelativeLayout
+import com.github.pcpl2.animeClient.adapters.AnimeListAdapter
+import kotlinx.android.synthetic.main.fragment_anime_list.*
 
 
 /**
@@ -32,12 +34,19 @@ class AnimeListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(false)
 
+        val adapter = AnimeListAdapter()
 
+        val linearLayoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
+        animeRecyclerView.layoutManager = linearLayoutManager
+        animeRecyclerView.itemAnimator = DefaultItemAnimator()
+        animeRecyclerView.adapter = adapter
 
         GogoanimeIo.getInstance().updateAnimeList(object : animeUpdateDataCallback {
             override fun onComplete(animeList: ArrayList<AnimeEntry>) {
-                for (anime in animeList) {
-                    Log.i("AnimeListFragment", anime.toString())
+                activity?.runOnUiThread {
+                    adapter.addAll(animeList)
+                    animeListEmpty.visibility = RelativeLayout.INVISIBLE
+                    animeRecyclerView.visibility = RecyclerView.VISIBLE
                 }
             }
 
@@ -47,3 +56,4 @@ class AnimeListFragment : Fragment() {
         })
     }
 }
+
