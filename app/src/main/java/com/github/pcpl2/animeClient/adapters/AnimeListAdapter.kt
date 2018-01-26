@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.github.pcpl2.animeClient.R
 import com.github.pcpl2.animeClient.domain.AnimeEntry
+import com.github.pcpl2.animeClient.fragments.AnimeListFragment
 import com.github.pcpl2.animeClient.holders.AnimeEntityViewHolder
 
 
 /**
  * Created by patry on 26.01.2018.
  */
-class AnimeListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AnimeListAdapter(private val animeListFragment: AnimeListFragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     enum class AnimeListTypes {
         ANIME_ENITIY
@@ -45,17 +46,30 @@ class AnimeListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
+    fun _notifyDataSetChanged() {
+        if(isEmpty() && (animeListFragment.currentState != AnimeListFragment.AnimeListFragmentStatus.EMPTY)) {
+            animeListFragment.setState(AnimeListFragment.AnimeListFragmentStatus.EMPTY)
+        } else {
+            if(animeListFragment.currentState == AnimeListFragment.AnimeListFragmentStatus.EMPTY) {
+                animeListFragment.setState(AnimeListFragment.AnimeListFragmentStatus.LOADED)
+            }
+        }
+        notifyDataSetChanged()
+    }
+
+
+
     fun addAll(animeEntryList: List<AnimeEntry>) {
         clear()
         animeList.addAll(animeEntryList)
         animeList.sortBy { it.title }
-        notifyDataSetChanged()
+        _notifyDataSetChanged()
     }
 
     fun clear() {
         animeList.clear()
         animeListFiltered.clear()
-        notifyDataSetChanged()
+        _notifyDataSetChanged()
     }
 
     fun isEmpty(): Boolean {

@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Anime-Client</string>
     <string name="anime_list_is_empty">Anime list is empty</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="start_fragment_text">Service is not selected. Open drawer and select service.</string>
 </resources>
