@@ -9,6 +9,7 @@ import co.zsmb.materialdrawerkt.draweritems.badgeable.secondaryItem
 import co.zsmb.materialdrawerkt.draweritems.sectionHeader
 import com.github.pcpl2.animeClient.R
 import com.github.pcpl2.animeClient.fragments.AnimeListFragment
+import com.github.pcpl2.animeClient.managers.CacheManager
 import com.mikepenz.materialdrawer.Drawer
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(customToolbar)
         supportActionBar?.setDisplayShowTitleEnabled(true)
 
+        CacheManager.getInstance().init(this)
 
         drawer = drawer {
             toolbar = customToolbar

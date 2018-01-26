@@ -8,6 +8,8 @@ import com.github.pcpl2.animeClient.domain.EpisodeEntry
  * Created by patry on 25.01.2018.
  */
 interface AnimeServiceImpl {
+
+    val serviceId: String
     val domain: String
 
     val animeList: ArrayList<AnimeEntry>
@@ -16,7 +18,7 @@ interface AnimeServiceImpl {
     val episodeList: ArrayList<EpisodeEntry>
     var selectedEpisode: EpisodeEntry?
 
-    fun updateAnimeList(callback: animeUpdateDataCallback) {}
+    fun updateAnimeList(callback: animeUpdateDataCallback, force: Boolean?) {}
 
     fun setCurrentAnime(animeId: String): Boolean {
         if(selectedAnime != null && selectedAnime?.id == animeId) {

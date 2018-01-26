@@ -1,9 +1,12 @@
 package com.github.pcpl2.animeClient.services
 
+import android.content.Context
 import android.util.Log
 import com.github.pcpl2.animeClient.callbacks.animeUpdateDataCallback
 import com.github.pcpl2.animeClient.domain.AnimeEntry
 import com.github.pcpl2.animeClient.domain.EpisodeEntry
+import com.github.pcpl2.animeClient.managers.CacheManager
+import com.github.pcpl2.animeClient.managers.CacheManagerImpl
 import java.io.IOException
 import org.jsoup.Jsoup
 
@@ -14,6 +17,7 @@ import org.jsoup.Jsoup
 
 class GogoanimeIoImpl : AnimeServiceImpl {
 
+    override val serviceId = "gogoanimeIo"
     override val domain = "https://ww4.gogoanime.io"
 
     override val animeList: ArrayList<AnimeEntry> = arrayListOf()
@@ -22,13 +26,20 @@ class GogoanimeIoImpl : AnimeServiceImpl {
     override val episodeList: ArrayList<EpisodeEntry> = arrayListOf()
     override var selectedEpisode: EpisodeEntry? = null
 
+    private val cacheManager: CacheManagerImpl = CacheManager.getInstance()
 
-    override fun updateAnimeList(callback: animeUpdateDataCallback) {
+
+    override fun updateAnimeList(callback: animeUpdateDataCallback, force: Boolean?) {
         animeList.clear()
 
-        val startUrl = "$domain/anime-list.html?page="
+        val dataFromCache = cacheManager.getFromCache(serviceId)
 
-        updateAnimeRunRequest(startUrl = startUrl, page = 1, animeList = arrayListOf(), callback = callback)
+        if (dataFromCache != null) {
+            updateAnimeComplete(dataFromCache, callback, fromCache = true)
+        } else {
+            val startUrl = "$domain/anime-list.html?page="
+            updateAnimeRunRequest(startUrl = startUrl, page = 1, animeList = arrayListOf(), callback = callback)
+        }
     }
 
     private fun updateAnimeRunRequest(startUrl: String, page: Int, animeList: ArrayList<AnimeEntry>, callback: animeUpdateDataCallback) {
@@ -65,9 +76,12 @@ class GogoanimeIoImpl : AnimeServiceImpl {
         }.start()
     }
 
-    private fun updateAnimeComplete(animeList: ArrayList<AnimeEntry>, callback: animeUpdateDataCallback) {
+    private fun updateAnimeComplete(animeList: ArrayList<AnimeEntry>, callback: animeUpdateDataCallback, fromCache: Boolean = false) {
         Log.d("", "complete")
         Log.d("", animeList.size.toString())
+        if(!fromCache) {
+            cacheManager.addCache(serviceId, animeList)
+        }
         callback.onComplete(animeList)
     }
 

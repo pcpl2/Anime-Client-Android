@@ -53,7 +53,7 @@ class AnimeListFragment : Fragment() {
             override fun onError(message: String) {
                 Log.e("AnimeListFragment", message)
             }
-        })
+        }, force = false)
     }
 }
 
