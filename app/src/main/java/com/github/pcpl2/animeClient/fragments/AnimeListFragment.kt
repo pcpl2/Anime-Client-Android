@@ -20,7 +20,14 @@ import kotlinx.android.synthetic.main.fragment_anime_list.*
  * Created by patry on 24.01.2018.
  */
 class AnimeListFragment : Fragment() {
+
+    enum class AnimeListFragmentStatus{
+        LOADING, LOADED, ERROR, EMPTY
+    }
+
     var serviceId: String? = null
+
+    var currentState = AnimeListFragmentStatus.LOADING
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (arguments != null) {
@@ -34,7 +41,7 @@ class AnimeListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(false)
 
-        val adapter = AnimeListAdapter()
+        val adapter = AnimeListAdapter(this)
 
         val linearLayoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
         animeRecyclerView.layoutManager = linearLayoutManager
@@ -45,8 +52,7 @@ class AnimeListFragment : Fragment() {
             override fun onComplete(animeList: ArrayList<AnimeEntry>) {
                 activity?.runOnUiThread {
                     adapter.addAll(animeList)
-                    animeListEmpty.visibility = RelativeLayout.INVISIBLE
-                    animeRecyclerView.visibility = RecyclerView.VISIBLE
+                    setState(AnimeListFragmentStatus.LOADED)
                 }
             }
 
@@ -54,6 +60,45 @@ class AnimeListFragment : Fragment() {
                 Log.e("AnimeListFragment", message)
             }
         }, force = false)
+    }
+
+    fun setState(state: AnimeListFragmentStatus) {
+        when(state) {
+            AnimeListFragmentStatus.LOADING -> {
+                currentState = AnimeListFragmentStatus.LOADING
+                animeListLoading.visibility = RelativeLayout.VISIBLE
+
+                animeListEmpty.visibility = RelativeLayout.INVISIBLE
+                animeRecyclerView.visibility = RecyclerView.INVISIBLE
+                animeListError.visibility = RelativeLayout.INVISIBLE
+            }
+            AnimeListFragmentStatus.LOADED -> {
+                currentState = AnimeListFragmentStatus.LOADED
+                animeRecyclerView.visibility = RecyclerView.VISIBLE
+
+                animeListEmpty.visibility = RelativeLayout.INVISIBLE
+                animeListLoading.visibility = RelativeLayout.INVISIBLE
+                animeListError.visibility = RelativeLayout.INVISIBLE
+            }
+            AnimeListFragmentStatus.EMPTY -> {
+                currentState = AnimeListFragmentStatus.EMPTY
+                animeListEmpty.visibility = RelativeLayout.VISIBLE
+
+                animeRecyclerView.visibility = RecyclerView.INVISIBLE
+                animeListLoading.visibility = RelativeLayout.INVISIBLE
+                animeListError.visibility = RelativeLayout.INVISIBLE
+            }
+            AnimeListFragmentStatus.ERROR -> {
+                currentState = AnimeListFragmentStatus.ERROR
+                animeListError.visibility = RelativeLayout.VISIBLE
+
+                animeListEmpty.visibility = RelativeLayout.INVISIBLE
+                animeRecyclerView.visibility = RecyclerView.INVISIBLE
+                animeListLoading.visibility = RelativeLayout.INVISIBLE
+
+            }
+        }
+
     }
 }
 

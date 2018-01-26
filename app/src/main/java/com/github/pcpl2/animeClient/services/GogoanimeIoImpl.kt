@@ -2,6 +2,7 @@ package com.github.pcpl2.animeClient.services
 
 import android.content.Context
 import android.util.Log
+import com.github.pcpl2.animeClient.callbacks.CachceManagerGetData
 import com.github.pcpl2.animeClient.callbacks.animeUpdateDataCallback
 import com.github.pcpl2.animeClient.domain.AnimeEntry
 import com.github.pcpl2.animeClient.domain.EpisodeEntry
@@ -32,14 +33,16 @@ class GogoanimeIoImpl : AnimeServiceImpl {
     override fun updateAnimeList(callback: animeUpdateDataCallback, force: Boolean?) {
         animeList.clear()
 
-        val dataFromCache = cacheManager.getFromCache(serviceId)
-
-        if (dataFromCache != null) {
-            updateAnimeComplete(dataFromCache, callback, fromCache = true)
-        } else {
-            val startUrl = "$domain/anime-list.html?page="
-            updateAnimeRunRequest(startUrl = startUrl, page = 1, animeList = arrayListOf(), callback = callback)
-        }
+        cacheManager.getFromCache(serviceId = serviceId, callback = object : CachceManagerGetData {
+            override fun onComplete(data: ArrayList<AnimeEntry>?) {
+                if (data != null) {
+                    updateAnimeComplete(data, callback, fromCache = true)
+                } else {
+                    val startUrl = "$domain/anime-list.html?page="
+                    updateAnimeRunRequest(startUrl = startUrl, page = 1, animeList = arrayListOf(), callback = callback)
+                }
+            }
+        })
     }
 
     private fun updateAnimeRunRequest(startUrl: String, page: Int, animeList: ArrayList<AnimeEntry>, callback: animeUpdateDataCallback) {
@@ -79,7 +82,7 @@ class GogoanimeIoImpl : AnimeServiceImpl {
     private fun updateAnimeComplete(animeList: ArrayList<AnimeEntry>, callback: animeUpdateDataCallback, fromCache: Boolean = false) {
         Log.d("", "complete")
         Log.d("", animeList.size.toString())
-        if(!fromCache) {
+        if (!fromCache) {
             cacheManager.addCache(serviceId, animeList)
         }
         callback.onComplete(animeList)

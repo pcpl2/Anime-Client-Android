@@ -1,6 +1,7 @@
 package com.github.pcpl2.animeClient.managers
 
 import android.content.Context
+import android.os.Process
 import com.github.pcpl2.animeClient.domain.AnimeEntry
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
@@ -14,6 +15,7 @@ import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 import com.google.gson.GsonBuilder
 import android.util.Log
+import com.github.pcpl2.animeClient.callbacks.CachceManagerGetData
 import java.io.*
 import com.google.gson.reflect.TypeToken
 import org.joda.time.Hours
@@ -48,7 +50,8 @@ class CacheManagerImpl {
 
     private val cacheAnimeMap: MutableMap<String, AnimeListCache> = mutableMapOf()
 
-    private var backgroundFileOperatorThread: Thread? = null
+    private var backgroundSaveFileThread: Thread? = null
+    private var backgroundReadFileThread: Thread? = null
 
     fun init(context: Context) {
         this.context = context.applicationContext
@@ -56,21 +59,22 @@ class CacheManagerImpl {
     }
 
     fun addCache(serviceId: String, animeList: ArrayList<AnimeEntry>) {
-        backgroundFileOperatorThread?.join()
+        backgroundSaveFileThread?.join()
         val animeListCache = AnimeListCache(ts = DateTime.now(), animeList = animeList)
         cacheAnimeMap[serviceId] = animeListCache
         updateCacheFile()
     }
 
-    fun getFromCache(serviceId: String): ArrayList<AnimeEntry>? {
-        backgroundFileOperatorThread?.join()
+    fun getFromCache(serviceId: String, callback: CachceManagerGetData) {
+        backgroundReadFileThread?.join()
         checkDateOfCache(serviceId = serviceId)
-        return cacheAnimeMap[serviceId]?.animeList
+        callback.onComplete(cacheAnimeMap[serviceId]?.animeList)
     }
 
     private fun updateCacheFile() {
-        backgroundFileOperatorThread?.join()
-        backgroundFileOperatorThread = Thread(Runnable {
+        backgroundSaveFileThread?.join()
+        backgroundSaveFileThread = Thread(Runnable {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND)
             val json = gson.toJson(cacheAnimeMap)
             val file = File(context?.cacheDir, filename)
             val fw = FileWriter(file.absoluteFile)
@@ -78,12 +82,13 @@ class CacheManagerImpl {
             bw.write(json)
             bw.close()
         })
-        backgroundFileOperatorThread?.start()
+        backgroundSaveFileThread?.start()
     }
 
     private fun readCacheFile() {
-        backgroundFileOperatorThread?.join()
-        backgroundFileOperatorThread = Thread(Runnable {
+        backgroundReadFileThread?.join()
+        backgroundReadFileThread = Thread(Runnable {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND)
             val file = File(context?.cacheDir, filename)
             val fr = FileReader(file.absoluteFile)
             val json = BufferedReader(fr).readLine()
@@ -93,14 +98,16 @@ class CacheManagerImpl {
             cacheAnimeMap.clear()
             cacheAnimeMap.putAll(obj)
         })
-        backgroundFileOperatorThread?.start()
+        backgroundReadFileThread?.start()
     }
 
     private fun checkDateOfCache(serviceId: String) {
-        val hours = Hours.hoursBetween(cacheAnimeMap[serviceId]?.ts, DateTime.now().plusHours(36))
-        if(hours.hours >= 24) {
-            cacheAnimeMap.remove(serviceId)
-            updateCacheFile()
+        if(cacheAnimeMap.contains(serviceId)) {
+            val hours = Hours.hoursBetween(cacheAnimeMap[serviceId]?.ts, DateTime.now().plusHours(36))
+            if(hours.hours >= 24) {
+                cacheAnimeMap.remove(serviceId)
+                updateCacheFile()
+            }
         }
     }
 }
