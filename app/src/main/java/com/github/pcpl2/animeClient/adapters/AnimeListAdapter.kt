@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.github.pcpl2.animeClient.R
+import com.github.pcpl2.animeClient.callbacks.AnimeListFragmentElementClicked
 import com.github.pcpl2.animeClient.domain.AnimeEntry
 import com.github.pcpl2.animeClient.fragments.AnimeListFragment
 import com.github.pcpl2.animeClient.holders.AnimeEntityViewHolder
@@ -12,7 +13,7 @@ import com.github.pcpl2.animeClient.holders.AnimeEntityViewHolder
 /**
  * Created by patry on 26.01.2018.
  */
-class AnimeListAdapter(private val animeListFragment: AnimeListFragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AnimeListAdapter(private val animeListFragment: AnimeListFragment, private val selectedItemCallback: AnimeListFragmentElementClicked) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     enum class AnimeListTypes {
         ANIME_ENITIY
@@ -26,7 +27,7 @@ class AnimeListAdapter(private val animeListFragment: AnimeListFragment) : Recyc
 
         when (viewType) {
             AnimeListTypes.ANIME_ENITIY.ordinal ->
-                viewHolder = AnimeEntityViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.anime_enitiy_row, parent, false))
+                viewHolder = AnimeEntityViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.anime_enitiy_row, parent, false), selectedItemCallback)
 
         }
         return viewHolder!!
@@ -56,8 +57,6 @@ class AnimeListAdapter(private val animeListFragment: AnimeListFragment) : Recyc
         }
         notifyDataSetChanged()
     }
-
-
 
     fun addAll(animeEntryList: List<AnimeEntry>) {
         clear()

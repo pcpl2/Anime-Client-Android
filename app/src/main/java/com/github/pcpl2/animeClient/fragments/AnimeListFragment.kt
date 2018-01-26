@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import com.github.pcpl2.animeClient.R
-import com.github.pcpl2.animeClient.callbacks.animeUpdateDataCallback
+import com.github.pcpl2.animeClient.callbacks.AnimeUpdateDataCallback
 import com.github.pcpl2.animeClient.domain.AnimeEntry
 import com.github.pcpl2.animeClient.services.GogoanimeIo
 import android.support.v7.widget.DefaultItemAnimator
@@ -13,6 +13,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.RelativeLayout
 import com.github.pcpl2.animeClient.adapters.AnimeListAdapter
+import com.github.pcpl2.animeClient.callbacks.AnimeListFragmentElementClicked
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_anime_list.*
 
 
@@ -33,7 +35,6 @@ class AnimeListFragment : Fragment() {
         if (arguments != null) {
             serviceId = arguments.getString("serviceId")
         }
-//        arguments.getString("Service")
         return inflater.inflate(R.layout.fragment_anime_list, container, false)
     }
 
@@ -41,14 +42,26 @@ class AnimeListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(false)
 
-        val adapter = AnimeListAdapter(this)
+        val adapter = AnimeListAdapter(this, object: AnimeListFragmentElementClicked {
+            override fun onClicked(animeId: String) {
+                val bundle = Bundle()
+                bundle.putString("serviceId", serviceId)
+                bundle.putString("animeId", animeId)
+                val episodeListFragment = EpisodeListFragment()
+                episodeListFragment.arguments = bundle
+                val fm = fragmentManager.beginTransaction()
+                fm.replace(activity.fragmentContainer.id, episodeListFragment)
+                fm.addToBackStack(null)
+                fm.commit()
+            }
+        })
 
         val linearLayoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
         animeRecyclerView.layoutManager = linearLayoutManager
         animeRecyclerView.itemAnimator = DefaultItemAnimator()
         animeRecyclerView.adapter = adapter
 
-        GogoanimeIo.getInstance().updateAnimeList(object : animeUpdateDataCallback {
+        GogoanimeIo.getInstance().updateAnimeList(object : AnimeUpdateDataCallback {
             override fun onComplete(animeList: ArrayList<AnimeEntry>) {
                 activity?.runOnUiThread {
                     adapter.addAll(animeList)
