@@ -34,7 +34,7 @@
         android:id="@+id/animeListLoading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -47,10 +47,27 @@
 
     <RelativeLayout
         android:id="@+id/animeListError"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone">
 
+        <TextView
+            android:id="@+id/animeListErrorText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/animeListErrorButtonRetry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/animeListError"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="38dp"
+            android:text="Retry" />
     </RelativeLayout>
 
 

@@ -23,11 +23,13 @@ import kotlinx.android.synthetic.main.fragment_anime_list.*
  */
 class AnimeListFragment : Fragment() {
 
-    enum class AnimeListFragmentStatus{
+    enum class AnimeListFragmentStatus {
         LOADING, LOADED, ERROR, EMPTY
     }
 
-    var serviceId: String? = null
+    private var serviceId: String? = null
+
+    private var adapter: AnimeListAdapter? = null
 
     var currentState = AnimeListFragmentStatus.LOADING
 
@@ -42,7 +44,7 @@ class AnimeListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(false)
 
-        val adapter = AnimeListAdapter(this, object: AnimeListFragmentElementClicked {
+        adapter = AnimeListAdapter(this, object : AnimeListFragmentElementClicked {
             override fun onClicked(animeId: String) {
                 val bundle = Bundle()
                 bundle.putString("serviceId", serviceId)
@@ -56,27 +58,38 @@ class AnimeListFragment : Fragment() {
             }
         })
 
-        val linearLayoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
-        animeRecyclerView.layoutManager = linearLayoutManager
+        animeListErrorText.text = ""
+        animeRecyclerView.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
         animeRecyclerView.itemAnimator = DefaultItemAnimator()
         animeRecyclerView.adapter = adapter
+        animeListErrorButtonRetry.setOnClickListener {
+            animeListErrorText.text = ""
+            updateData()
+        }
 
+        updateData()
+
+    }
+
+    private fun updateData() {
+        setState(AnimeListFragmentStatus.LOADING)
         GogoanimeIo.getInstance().updateAnimeList(object : AnimeUpdateDataCallback {
             override fun onComplete(animeList: ArrayList<AnimeEntry>) {
                 activity?.runOnUiThread {
-                    adapter.addAll(animeList)
+                    adapter?.addAll(animeList)
                     setState(AnimeListFragmentStatus.LOADED)
                 }
             }
 
             override fun onError(message: String) {
-                Log.e("AnimeListFragment", message)
+                animeListErrorText.text = message
+                setState(AnimeListFragmentStatus.ERROR)
             }
         }, force = false)
     }
 
     fun setState(state: AnimeListFragmentStatus) {
-        when(state) {
+        when (state) {
             AnimeListFragmentStatus.LOADING -> {
                 currentState = AnimeListFragmentStatus.LOADING
                 animeListLoading.visibility = RelativeLayout.VISIBLE
@@ -108,10 +121,7 @@ class AnimeListFragment : Fragment() {
                 animeListEmpty.visibility = RelativeLayout.INVISIBLE
                 animeRecyclerView.visibility = RecyclerView.INVISIBLE
                 animeListLoading.visibility = RelativeLayout.INVISIBLE
-
             }
         }
-
     }
 }
-
