@@ -1,6 +1,7 @@
 package com.github.pcpl2.animeClient.activities
 
 import android.app.Fragment
+import android.app.FragmentManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import co.zsmb.materialdrawerkt.builders.drawer
@@ -53,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                     val animeListFragment = AnimeListFragment()
                     animeListFragment.arguments = bundle
                     replaceFragment(animeListFragment)
+
                     false
                 }
             }
@@ -62,6 +64,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun replaceFragment(fragment: Fragment) {
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         fragmentManager.beginTransaction().replace(fragmentContainer.id, fragment).commit()
     }
 }
