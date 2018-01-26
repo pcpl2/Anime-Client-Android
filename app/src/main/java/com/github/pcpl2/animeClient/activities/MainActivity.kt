@@ -9,6 +9,7 @@ import co.zsmb.materialdrawerkt.draweritems.badgeable.secondaryItem
 import co.zsmb.materialdrawerkt.draweritems.sectionHeader
 import com.github.pcpl2.animeClient.R
 import com.github.pcpl2.animeClient.fragments.AnimeListFragment
+import com.github.pcpl2.animeClient.fragments.StartFragment
 import com.github.pcpl2.animeClient.managers.CacheManager
 import com.mikepenz.materialdrawer.Drawer
 import kotlinx.android.synthetic.main.activity_main.*
@@ -46,13 +47,18 @@ class MainActivity : AppCompatActivity() {
             sectionHeader("Services")
 
             secondaryItem("gogoanime.io") {
-                val bundle = Bundle()
-                bundle.putString("serviceId", "gogoanimeIo")
-                val animeListFragment = AnimeListFragment()
-                animeListFragment.arguments = bundle
-                replaceFragment(animeListFragment)
+                onClick { _ ->
+                    val bundle = Bundle()
+                    bundle.putString("serviceId", "gogoanimeIo")
+                    val animeListFragment = AnimeListFragment()
+                    animeListFragment.arguments = bundle
+                    replaceFragment(animeListFragment)
+                    false
+                }
             }
         }
+
+        replaceFragment(StartFragment())
     }
 
     fun replaceFragment(fragment: Fragment) {
