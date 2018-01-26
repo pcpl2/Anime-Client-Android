@@ -103,7 +103,7 @@ class CacheManagerImpl {
 
     private fun checkDateOfCache(serviceId: String) {
         if(cacheAnimeMap.contains(serviceId)) {
-            val hours = Hours.hoursBetween(cacheAnimeMap[serviceId]?.ts, DateTime.now().plusHours(36))
+            val hours = Hours.hoursBetween(cacheAnimeMap[serviceId]?.ts, DateTime.now())
             if(hours.hours >= 24) {
                 cacheAnimeMap.remove(serviceId)
                 updateCacheFile()
