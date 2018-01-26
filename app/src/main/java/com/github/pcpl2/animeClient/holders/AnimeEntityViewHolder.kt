@@ -14,6 +14,7 @@ class AnimeEntityViewHolder(itemView: View, private val selectedItemCallback: An
 
     fun bind(animeEntry: AnimeEntry) {
         itemView.anime_title.text = animeEntry.title
+        itemView.anime_title.isSelected = true
         itemView.anime_desc.text = animeEntry.desc
         //TODO iamge loader
 
