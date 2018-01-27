@@ -57,6 +57,8 @@ class AnimeListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(false)
 
+        activity.title = "Select anime"
+
         adapter = AnimeListAdapter(this, object : AnimeListFragmentElementClicked {
             override fun onClicked(animeEntry: AnimeEntry) {
                 val bundle = Bundle()
@@ -66,7 +68,6 @@ class AnimeListFragment : Fragment() {
                 episodeListFragment.arguments = bundle
                 val fm = fragmentManager.beginTransaction()
                 fm.replace(activity.fragmentContainer.id, episodeListFragment)
-                fm.addToBackStack(null)
                 fm.commit()
             }
         })
