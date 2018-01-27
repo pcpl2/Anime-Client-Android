@@ -7,7 +7,7 @@ import com.github.pcpl2.animeClient.R
 import com.github.pcpl2.animeClient.callbacks.AnimeListFragmentElementClicked
 import com.github.pcpl2.animeClient.domain.AnimeEntry
 import com.github.pcpl2.animeClient.fragments.AnimeListFragment
-import com.github.pcpl2.animeClient.holders.AnimeEntityViewHolder
+import com.github.pcpl2.animeClient.holders.AnimeEntryViewHolder
 
 
 /**
@@ -27,7 +27,7 @@ class AnimeListAdapter(private val animeListFragment: AnimeListFragment, private
 
         when (viewType) {
             AnimeListTypes.ANIME_ENITIY.ordinal ->
-                viewHolder = AnimeEntityViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.anime_enitiy_row, parent, false), selectedItemCallback)
+                viewHolder = AnimeEntryViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.anime_entry_row, parent, false), selectedItemCallback)
 
         }
         return viewHolder!!
@@ -41,7 +41,7 @@ class AnimeListAdapter(private val animeListFragment: AnimeListFragment, private
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         when (getItemViewType(position)) {
             AnimeListTypes.ANIME_ENITIY.ordinal -> {
-                val animeViewHolder = holder as AnimeEntityViewHolder
+                val animeViewHolder = holder as AnimeEntryViewHolder
                 animeViewHolder.bind(animeList[position])
             }
         }

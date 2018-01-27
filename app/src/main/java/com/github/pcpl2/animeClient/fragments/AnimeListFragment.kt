@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView
 import android.widget.RelativeLayout
 import com.github.pcpl2.animeClient.adapters.AnimeListAdapter
 import com.github.pcpl2.animeClient.callbacks.AnimeListFragmentElementClicked
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_anime_list.*
 
@@ -45,10 +46,10 @@ class AnimeListFragment : Fragment() {
         setHasOptionsMenu(false)
 
         adapter = AnimeListAdapter(this, object : AnimeListFragmentElementClicked {
-            override fun onClicked(animeId: String) {
+            override fun onClicked(animeEntry: AnimeEntry) {
                 val bundle = Bundle()
                 bundle.putString("serviceId", serviceId)
-                bundle.putString("animeId", animeId)
+                bundle.putString("animeEntry", Gson().toJson(animeEntry))
                 val episodeListFragment = EpisodeListFragment()
                 episodeListFragment.arguments = bundle
                 val fm = fragmentManager.beginTransaction()
