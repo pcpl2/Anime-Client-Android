@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
-        assertEquals("com.github.pcpl2.anime_client", appContext.packageName)
+        assertEquals("com.github.pcpl2.animeClient", appContext.packageName)
     }
 }
