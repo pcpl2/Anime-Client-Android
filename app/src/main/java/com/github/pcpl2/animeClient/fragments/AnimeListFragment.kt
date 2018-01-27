@@ -1,8 +1,8 @@
 package com.github.pcpl2.animeClient.fragments
 
 import android.app.Fragment
+import android.app.FragmentManager
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import com.github.pcpl2.animeClient.R
 import com.github.pcpl2.animeClient.callbacks.AnimeUpdateDataCallback
@@ -37,8 +37,20 @@ class AnimeListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (arguments != null) {
             serviceId = arguments.getString("serviceId")
+
+            if (serviceId == null) backToPrevious()
+
+        } else {
+            backToPrevious()
         }
         return inflater.inflate(R.layout.fragment_anime_list, container, false)
+    }
+
+    private fun backToPrevious() {
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        val fm = fragmentManager.beginTransaction()
+        fm.replace(activity.fragmentContainer.id, StartFragment())
+        fm.commit()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,7 +81,6 @@ class AnimeListFragment : Fragment() {
         }
 
         updateData()
-
     }
 
     private fun updateData() {
