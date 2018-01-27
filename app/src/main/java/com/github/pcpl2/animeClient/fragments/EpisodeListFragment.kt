@@ -14,7 +14,7 @@ import android.widget.RelativeLayout
 import com.github.pcpl2.animeClient.R
 import com.github.pcpl2.animeClient.adapters.EpisodeListAdapter
 import com.github.pcpl2.animeClient.callbacks.EpisodeListFragmentElementClicked
-import com.github.pcpl2.animeClient.callbacks.EpisodeUpdateDataCallback
+import com.github.pcpl2.animeClient.callbacks.UpdateEpisodeListCallback
 import com.github.pcpl2.animeClient.domain.AnimeEntry
 import com.github.pcpl2.animeClient.domain.EpisodeEntry
 import com.github.pcpl2.animeClient.services.GogoanimeIo
@@ -93,7 +93,7 @@ class EpisodeListFragment : Fragment() {
         if(animeEntry?.url == null) {
             backToPrevious()
         } else {
-            GogoanimeIo.getInstance().updateEpisodeList(animeEntry?.url, object : EpisodeUpdateDataCallback {
+            GogoanimeIo.getInstance().updateEpisodeList(animeEntry?.url, object : UpdateEpisodeListCallback {
                 override fun onComplete(episodeList: ArrayList<EpisodeEntry>) {
                     activity?.runOnUiThread {
                         adapter?.addAll(episodeList)

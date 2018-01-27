@@ -1,7 +1,8 @@
 package com.github.pcpl2.animeClient.services
 
-import com.github.pcpl2.animeClient.callbacks.AnimeUpdateDataCallback
-import com.github.pcpl2.animeClient.callbacks.EpisodeUpdateDataCallback
+import com.github.pcpl2.animeClient.callbacks.UpdateAnimeListCallback
+import com.github.pcpl2.animeClient.callbacks.UpdateEpisodeListCallback
+import com.github.pcpl2.animeClient.callbacks.UpdatePlayersListCallback
 
 /**
  * Created by patry on 25.01.2018.
@@ -13,9 +14,9 @@ interface AnimeServiceImpl {
 
     var workThread: Thread?
 
-    fun updateAnimeList(callback: AnimeUpdateDataCallback, force: Boolean?) {}
+    fun updateAnimeList(callbackUpdate: UpdateAnimeListCallback, force: Boolean?) {}
 
-    fun updateEpisodeList(episodeUrl: String?, callback: EpisodeUpdateDataCallback) {}
+    fun updateEpisodeList(episodeUrl: String?, callback: UpdateEpisodeListCallback) {}
 
-    fun updateCurrentEpisodeData() {}
+    fun updatePlayersList(episodeUrl: String?, callback: UpdatePlayersListCallback) {}
 }

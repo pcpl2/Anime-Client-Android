@@ -5,7 +5,7 @@ import android.app.FragmentManager
 import android.os.Bundle
 import android.view.*
 import com.github.pcpl2.animeClient.R
-import com.github.pcpl2.animeClient.callbacks.AnimeUpdateDataCallback
+import com.github.pcpl2.animeClient.callbacks.UpdateAnimeListCallback
 import com.github.pcpl2.animeClient.domain.AnimeEntry
 import com.github.pcpl2.animeClient.services.GogoanimeIo
 import android.support.v7.widget.DefaultItemAnimator
@@ -86,7 +86,7 @@ class AnimeListFragment : Fragment() {
 
     private fun updateData() {
         setState(AnimeListFragmentStatus.LOADING)
-        GogoanimeIo.getInstance().updateAnimeList(object : AnimeUpdateDataCallback {
+        GogoanimeIo.getInstance().updateAnimeList(object : UpdateAnimeListCallback {
             override fun onComplete(animeList: ArrayList<AnimeEntry>) {
                 activity?.runOnUiThread {
                     adapter?.addAll(animeList)
